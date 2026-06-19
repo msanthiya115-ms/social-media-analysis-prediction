@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Social Media Addiction Prediction</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="container">
+
+    <h1>Social Media Addiction Analysis</h1>
+
+    <form action="/predict" method="POST">
+
+        <input type="number" name="age" placeholder="Age" required>
+
+        <input type="text" name="gender" placeholder="Gender" required>
+
+        <input type="text" name="occupation" placeholder="Occupation (Student/Working Professional)" required>
+
+        <input type="number" step="1" name="screen_time" placeholder="Screen Time (hrs)" required>
+
+        <input type="text" name="app_used" placeholder="Most Used App (Instagram/Snapchat/Facebook/Twitter/YouTube/WhatsApp)" required>
+
+        <input type="text" name="checks" placeholder="Check Frequency (Rarely /Occasionally /Often /Very Often /Almost Constantly)" required>
+
+        <input type="text" name="usage_time" placeholder="Usage Mainly During (Morning/Afternoon/Night/All Day)" required>
+
+        <input type="number" step="1" name="sleep" placeholder="Sleep Hours" required>
+
+        <input type="text" name="distracted" placeholder="Distracted? (Yes/No/Sometimes)" required>
+
+        <input type="number" step="1" name="work_hours" placeholder="Study/Work Hours" required>
+
+        <input type="number" name="productivity" placeholder="Productivity (1-10)" required>
+
+        <input type="number" name="mood" placeholder="Mood (1-5)" required>
+
+        <button type="submit">Predict</button>
+
+    </form>
+
+    <h2>{{ prediction_text }}</h2>
+
+</div>
+
+</body>
+</html>

@@ -4,25 +4,28 @@ import pandas as pd
 
 app = Flask(__name__)
 
+# Load model and encoders
 model = pickle.load(open("model.pkl", "rb"))
 encoders = pickle.load(open("encoder.pkl", "rb"))
+
 
 @app.route('/')
 def home():
     return render_template('index.html')
 
+
 @app.route('/predict', methods=['POST'])
 def predict():
 
     age = int(request.form['age'])
-    gender = request.form['gender']
-    occupation = request.form['occupation']
+    gender = request.form['gender'].strip()
+    occupation = request.form['occupation'].strip()
     screen_time = float(request.form['screen_time'])
-    app_used = request.form['app_used']
-    checks = request.form['checks']
-    usage_time = request.form['usage_time']
+    app_used = request.form['app_used'].strip()
+    checks = request.form['checks'].strip()
+    usage_time = request.form['usage_time'].strip()
     sleep = float(request.form['sleep'])
-    distracted = request.form['distracted']
+    distracted = request.form['distracted'].strip()
     work_hours = float(request.form['work_hours'])
     productivity = int(request.form['productivity'])
     mood = int(request.form['mood'])
@@ -55,16 +58,31 @@ def predict():
         'Mood level (1-5)'
     ])
 
-    # Encode categorical values
+    # Encode categorical columns
     for col in input_data.columns:
         if col in encoders:
-            input_data[col] = encoders[col].transform(input_data[col])
+            try:
+                input_data[col] = input_data[col].astype(str).str.strip()
+                input_data[col] = encoders[col].transform(input_data[col])
+            except Exception as e:
+                return render_template(
+                    'index.html',
+                    prediction_text=f"Error in column '{col}': {e}"
+                )
 
+    # Make prediction
     prediction = model.predict(input_data)
 
-    result = encoders['How addicted do you feel to social media?'].inverse_transform(prediction)[0]
+    # Decode prediction
+    result = encoders[
+        'How addicted do you feel to social media?'
+    ].inverse_transform(prediction)[0]
 
-    return render_template('index.html',prediction_text=f'Addiction Level : {result}')
+    return render_template(
+        'index.html',
+        prediction_text=f'Addiction Level : {result}'
+    )
+
 
 if __name__ == "__main__":
     app.run(debug=True)
